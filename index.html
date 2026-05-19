@@ -12,7 +12,7 @@
         .logo small { display: block; font-size: 0.8rem; color: #fff; font-weight: 300; }
         .nav-links { display: flex; gap: 12px; list-style: none; align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; }
         .nav-links a { color: rgba(255,255,255,0.9); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: color 0.3s; cursor: pointer; }
-        .nav-cta { background: linear-gradient(135deg, #074205, #ecca15); color: #fff !important; padding: 8px 14px; border-radius: 50px; font-weight: 600 !important; white-space: nowrap; }
+        .nav-cta { background: linear-gradient(135deg, #074205, #ecca15); color: #fff !important; padding: 8px 14px; border-radius: 50px; font-weight: 600 !important; white-space: nowrap; cursor: pointer; }
         .hero { color: white; flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 180px 20px 60px; }
         .hero-content { max-width: 650px; width: 100%; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 30px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
         .hero h1 { font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.2; margin-bottom: 15px; }
@@ -31,7 +31,7 @@
             <li id="portalLinkContainer" style="display: none;"><a href="student-portal.html">PORTAL</a></li>
             <li id="adminLinkContainer" style="display: none;"><a href="admin.html">ADMIN</a></li>
             <li><a href="about.html">ABOUT</a></li>
-            <li><a onclick="verifyEnrollmentAccess()" class="nav-cta">Enrollment Application</a></li>
+            <li><a href="javascript:void(0);" onclick="verifyEnrollmentAccess()" class="nav-cta">Enrollment Application</a></li>
             <li id="loginLinkContainer"><a href="login.html">LOGIN</a></li>
             <li id="logoutContainer" style="display: none;"><button class="logout-btn" onclick="handleLogout()">LOGOUT</button></li>
         </ul>
@@ -54,20 +54,42 @@
             const adminLink = document.getElementById("adminLinkContainer");
             const loginLink = document.getElementById("loginLinkContainer");
             const logoutLink = document.getElementById("logoutContainer");
-            portalLink.style.display = "none"; adminLink.style.display = "none"; loginLink.style.display = "block"; logoutLink.style.display = "none";
-            if (activeRole === "admin") { adminLink.style.display = "block"; loginLink.style.display = "none"; logoutLink.style.display = "block"; }
-            else if (activeRole === "student") { portalLink.style.display = "block"; loginLink.style.display = "none"; logoutLink.style.display = "block"; }
+            
+            portalLink.style.display = "none"; 
+            adminLink.style.display = "none"; 
+            loginLink.style.display = "block"; 
+            logoutLink.style.display = "none";
+            
+            if (activeRole === "admin") { 
+                adminLink.style.display = "block"; 
+                loginLink.style.display = "none"; 
+                logoutLink.style.display = "block"; 
+            }
+            else if (activeRole === "student") { 
+                portalLink.style.display = "block"; 
+                loginLink.style.display = "none"; 
+                logoutLink.style.display = "block"; 
+            }
         }
         window.addEventListener("DOMContentLoaded", synchronizeHomeNavigation);
+        
         function verifyEnrollmentAccess() {
             const userEmail = getCookie("userEmail");
             const userRole = getCookie("userRole");
-            if (!userEmail || userRole !== "student") { alert("Authentication Required: Please log in to your student account first."); window.location.href = "login.html"; }
-            else { window.location.href = "enroll.html"; }
+            if (!userEmail || userRole !== "student") { 
+                alert("Authentication Required: Please log in to your student account first."); 
+                window.location.href = "login.html"; 
+            }
+            else { 
+                window.location.href = "enroll.html"; 
+            }
         }
         function handleLogout() {
-            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;";
-            alert("Session terminated successfully."); window.location.href = "index.html";
+            document.cookie = "userRole=; path=/; max-age=0;"; 
+            document.cookie = "userName=; path=/; max-age=0;"; 
+            document.cookie = "userEmail=; path=/; max-age=0;";
+            alert("Session terminated successfully."); 
+            window.location.href = "index.html";
         }
     </script>
 </body>
