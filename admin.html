@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script>
+        function getCookie(name) {
+            let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+        if (getCookie("userRole") !== "admin") { window.location.href = "login.html"; }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; display: flex; height: 100vh; }
+        .sidebar { width: 300px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
+        .sidebar h2 { padding: 20px; background: #468432; color: white; font-size: 1.1rem; text-align: center; }
+        .app-list { overflow-y: auto; flex: 1; padding: 10px; }
+        .app-item { padding: 12px; margin-bottom: 8px; background: #f8f9fa; border: 1px solid #eee; border-radius: 6px; cursor: pointer; }
+        .app-item.active { background: #468432; color: white; }
+        .main-panel { flex: 1; padding: 30px; overflow-y: auto; }
+        .details-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .info-group { background: #f8f9fa; padding: 12px; border-radius: 6px; border: 1px solid #eee; }
+        .info-group label { font-size: 0.7rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; }
+        .info-group div { font-size: 0.95rem; color: #2c3e50; margin-top: 4px; }
+        .doc-card img { max-width: 100%; max-height: 150px; margin-top: 10px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer; }
+        .action-btn { padding: 10px 20px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; margin-top: 15px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Applications (<span id="count">0</span>)</h2>
+        <div class="app-list" id="appList"></div>
+        <div style="padding:15px; display:flex; gap:10px;">
+            <button onclick="fetchApplications()" style="flex:1; padding:10px; background:#468432; color:white; border:none; border-radius:4px; cursor:pointer;">Refresh</button>
+            <button onclick="executeLogout()" style="padding:10px; background:#7f8c8d; color:white; border:none; border-radius:4px; cursor:pointer;">Exit</button>
+        </div>
+    </div>
+    <div class="main-panel">
+        <div id="placeholder" style="color:#7f8c8d; text-align:center; margin-top:100px;">Select a student from the menu list to view details.</div>
+        <div id="details" class="details-container" style="display:none;">
+            <h2>Student Profile Review</h2>
+            <div class="details-grid">
+                <div class="info-group"><label>Full Name</label><div id="viewName"></div></div>
+                <div class="info-group"><label>Email Address</label><div id="viewEmail"></div></div>
+                <div class="info-group"><label>Program</label><div id="viewProgram"></div></div>
+                <div class="info-group"><label>Status</label><div id="viewStatus" style="font-weight:bold;"></div></div>
+            </div>
+            <div id="docGrid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:20px;"></div>
+            <div style="margin-top:30px; border-top:1px solid #eee; padding-top:20px;">
+                <button class="action-btn" style="background:#2ecc71;" onclick="evaluateApplication('Approved')">Approve</button>
+                <button class="action-btn" style="background:#e67e22;" onclick="evaluateApplication('Rejected')">Reject</button>
+                <button class="action-btn" style="background:#c0392b;" onclick="purgeApplicationRecord()">Delete Record</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const CLOUD_URL = "https://riggs-cvsu-enrollment.up.railway.app"; 
+        let applications = [];
+        let activeIndex = null;
+
+        async function fetchApplications() {
+            try {
+                const response = await fetch(`${CLOUD_URL}/api/applications`);
+                applications = await response.json();
+                loadDashboard();
+            } catch (error) { alert("Server connectivity offline."); }
+        }
+        window.onload = fetchApplications;
+
+        function loadDashboard() {
+            const appList = document.getElementById("appList");
+            document.getElementById("count").innerText = applications.length;
+            appList.innerHTML = "";
+            if (applications.length === 0) {
+                document.getElementById("placeholder").style.display = "block";
+                document.getElementById("details").style.display = "none";
+                return;
+            }
+            applications.forEach((app, i) => {
+                const div = document.createElement("div");
+                div.className = `app-item ${activeIndex === i ? 'active' : ''}`;
+                div.innerHTML = `<strong>${app.name}</strong><p>${app.program} (${app.status})</p>`;
+                div.onclick = () => showStudentDetails(i);
+                appList.appendChild(div);
+            });
+        }
+
+        function showStudentDetails(index) {
+            activeIndex = index;
+            loadDashboard();
+            const app = applications[index];
+            document.getElementById("placeholder").style.display = "none";
+            document.getElementById("details").style.display = "block";
+            document.getElementById("viewName").innerText = app.name;
+            document.getElementById("viewEmail").innerText = app.email;
+            document.getElementById("viewProgram").innerText = app.program;
+            document.getElementById("viewStatus").innerText = app.status.toUpperCase();
+
+            const docGrid = document.getElementById("docGrid");
+            docGrid.innerHTML = "";
+            const docs = [
+                { name: "Birth Cert", src: app.birthCertImg },
+                { name: "Student ID", src: app.studentIdImg }
+            ];
+            docs.forEach(d => {
+                if(d.src) {
+                    const card = document.createElement("div");
+                    card.className = "doc-card";
+                    card.innerHTML = `<strong>${d.name}</strong><br><img src="${d.src}" onclick="window.open(this.src)">`;
+                    docGrid.appendChild(card);
+                }
+            });
+        }
+
+        async function evaluateApplication(targetStatus) {
+            if (activeIndex === null) return;
+            try {
+                await fetch(`${CLOUD_URL}/api/applications/update`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: applications[activeIndex].email, status: targetStatus })
+                });
+                alert("State updated."); fetchApplications();
+            } catch (e) { alert("Error updating."); }
+        }
+
+        async function purgeApplicationRecord() {
+            if (activeIndex === null || !confirm("Delete permanently?")) return;
+            try {
+                await fetch(`${CLOUD_URL}/api/applications/delete?email=${encodeURIComponent(applications[activeIndex].email)}`, { method: "DELETE" });
+                activeIndex = null; fetchApplications();
+            } catch (e) { alert("Error deleting."); }
+        }
+
+        function executeLogout() {
+            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;"; window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

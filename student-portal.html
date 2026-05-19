@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <script>
+        function getCookie(name) {
+            let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+        if (getCookie("userRole") !== "student") { window.location.href = "login.html"; }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; padding: 20px; }
+        nav { background-color: #468432; padding: 15px; display: flex; justify-content: space-between; align-items: center; color: white; border-radius: 6px; margin-bottom: 20px; }
+        nav a { color: white; text-decoration: none; font-weight: bold; }
+        .main-container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .status-badge { background: #e67e22; color: white; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; display: inline-block; margin-top: 10px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .card { background: #f8f9fa; padding: 15px; border-radius: 6px; border: 1px solid #eee; }
+        .card label { font-size: 0.75rem; color: #7f8c8d; font-weight: bold; text-transform: uppercase; }
+        .card div { font-size: 1rem; color: #2c3e50; margin-top: 4px; }
+        button { background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">← Hub Home</a>
+        <button onclick="executeLogout()">Sign Out</button>
+    </nav>
+    <div class="main-container">
+        <h1>Welcome, <span id="portalStudentName">Student</span>!</h1>
+        <div>Status: <span id="portalStatus" class="status-badge">No Form Record Indexed</span></div>
+        <div class="info-grid">
+            <div class="card"><label>Email Reference</label><div id="profileEmail"></div></div>
+            <div class="card"><label>Degree Path</label><div id="profileProgram">Not submitted</div></div>
+            <div class="card"><label>Semester Block</label><div id="profileSemester">Not submitted</div></div>
+            <div class="card"><label>Year Level</label><div id="profileYear">Not submitted</div></div>
+        </div>
+    </div>
+    <script>
+        const CLOUD_URL = "https://riggs-cvsu-enrollment.up.railway.app";
+        document.getElementById("portalStudentName").innerText = getCookie("userName");
+        
+        async function syncStudentState() {
+            const userEmail = getCookie("userEmail");
+            document.getElementById("profileEmail").innerText = userEmail;
+            try {
+                const response = await fetch(`${CLOUD_URL}/api/applications`);
+                const networkRecords = await response.json();
+                const match = networkRecords.find(app => app.email.toLowerCase() === userEmail.toLowerCase());
+                if (match) {
+                    document.getElementById("portalStatus").innerText = match.status.toUpperCase();
+                    document.getElementById("profileProgram").innerText = match.program;
+                    document.getElementById("profileSemester").innerText = match.semester;
+                    document.getElementById("profileYear").innerText = match.year;
+                }
+            } catch (e) {}
+        }
+        function executeLogout() {
+            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;"; window.location.href = "login.html";
+        }
+        window.onload = syncStudentState;
+    </script>
+</body>
+</html>

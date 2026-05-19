@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | Enrollment Form</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-image: linear-gradient(rgba(70, 132, 50, 0.85), rgba(70, 132, 50, 0.85)), url("indexbackground.jpg"); background-size: cover; background-position: center; background-attachment: fixed; font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        nav { position: fixed; top: 0; width: 100%; padding: 15px 20px; display: flex; flex-direction: column; gap: 15px; align-items: center; text-align: center; z-index: 100; background-color: #468432; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        .logo { font-size: 1.2rem; font-weight: 900; color: #6FCF97; letter-spacing: 1px; }
+        .logo small { display: block; font-size: 0.8rem; color: #fff; font-weight: 300; }
+        .nav-links { display: flex; gap: 12px; list-style: none; align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .nav-links a { color: rgba(255,255,255,0.9); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: color 0.3s; cursor: pointer; }
+        .nav-cta { background: linear-gradient(135deg, #074205, #ecca15); color: #fff !important; padding: 8px 14px; border-radius: 50px; font-weight: 600 !important; white-space: nowrap; }
+        .hero { color: white; flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 180px 20px 60px; }
+        .hero-content { max-width: 650px; width: 100%; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 30px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+        .hero h1 { font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.2; margin-bottom: 15px; }
+        .hero h1 span { font-size: clamp(1.3rem, 4vw, 2.2rem); color: #faeb60; display: block; margin-top: 5px; }
+        .hero p { font-size: clamp(0.95rem, 2.5vw, 1.1rem); line-height: 1.6; margin: 15px 0 25px; }
+        .tags-container { font-size: 0.8rem; color: #faeb60; font-weight: bold; letter-spacing: 1px; }
+        .logout-btn { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
+        @media (min-width: 768px) { nav { flex-direction: row; justify-content: space-between; padding: 15px 40px; } .logo { font-size: 1.4rem; text-align: left; } .logo small { display: inline-block; margin-left: 5px; } .nav-links { width: auto; gap: 20px; } .nav-links a { font-size: 0.9rem; } .hero { padding: 120px 20px 60px; } .hero-content { padding: 50px 40px; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Cavite State University<small>- Bacoor Campus</small></div>
+        <ul class="nav-links">
+            <li><a href="index.html">HOME</a></li>
+            <li id="portalLinkContainer" style="display: none;"><a href="student-portal.html">PORTAL</a></li>
+            <li id="adminLinkContainer" style="display: none;"><a href="admin.html">ADMIN</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+            <li><a onclick="verifyEnrollmentAccess()" class="nav-cta">Enrollment Application</a></li>
+            <li id="loginLinkContainer"><a href="login.html">LOGIN</a></li>
+            <li id="logoutContainer" style="display: none;"><button class="logout-btn" onclick="handleLogout()">LOGOUT</button></li>
+        </ul>
+    </nav>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>ONLINE ENROLLMENT<span>CvSU-Bacoor</span></h1>
+            <p>Let's ride the waves with stingrays at CvSU Bacoor!<br>You can enroll online now.<br>This is the start of a school adventure, with new things to learn, grow, and explore.</p>
+            <div class="tags-container">#cvsubacoor &bull; #OnlineEnrollment &bull; #StingraysSoar</div>
+        </div>
+    </section>
+    <script>
+        function getCookie(name) {
+            let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? decodeURIComponent(match[2]) : null;
+        }
+        function synchronizeHomeNavigation() {
+            const activeRole = getCookie("userRole");
+            const portalLink = document.getElementById("portalLinkContainer");
+            const adminLink = document.getElementById("adminLinkContainer");
+            const loginLink = document.getElementById("loginLinkContainer");
+            const logoutLink = document.getElementById("logoutContainer");
+            portalLink.style.display = "none"; adminLink.style.display = "none"; loginLink.style.display = "block"; logoutLink.style.display = "none";
+            if (activeRole === "admin") { adminLink.style.display = "block"; loginLink.style.display = "none"; logoutLink.style.display = "block"; }
+            else if (activeRole === "student") { portalLink.style.display = "block"; loginLink.style.display = "none"; logoutLink.style.display = "block"; }
+        }
+        window.addEventListener("DOMContentLoaded", synchronizeHomeNavigation);
+        function verifyEnrollmentAccess() {
+            const userEmail = getCookie("userEmail");
+            const userRole = getCookie("userRole");
+            if (!userEmail || userRole !== "student") { alert("Authentication Required: Please log in to your student account first."); window.location.href = "login.html"; }
+            else { window.location.href = "enroll.html"; }
+        }
+        function handleLogout() {
+            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;";
+            alert("Session terminated successfully."); window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
