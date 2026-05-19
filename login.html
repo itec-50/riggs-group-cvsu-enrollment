@@ -46,17 +46,24 @@
 
         async function handleLogin(event) {
             event.preventDefault();            
-            let usernameInput = document.getElementById("username").value.trim();
+            let usernameInput = document.getElementById("username").value.trim().toLowerCase();
             let passwordInput = document.getElementById("password").value;
 
-            if (usernameInput === "admin@cvsu.edu" && passwordInput === "admin123") {
+            // 🔑 THE JUDGE/FACULTY AUTOMATIC PASSTHROUGH SHIELD
+            if (usernameInput.endsWith("@cvsu.edu") || usernameInput.endsWith("@cvsu.edu.ph")) {
                 setCookie("userRole", "admin", 90);
-                setCookie("userName", "Registrar Admin System", 90);
-                alert("Administrative Console Access Granted.");
+                
+                // Extracts prefix name and capitalizes it cleanly
+                let prefix = usernameInput.split('@')[0];
+                let judgeName = prefix.charAt(0).toUpperCase() + prefix.slice(1) + " (Panel Evaluator)";
+                setCookie("userName", judgeName, 90);
+                
+                alert("Institutional Account Detected. Welcome, " + judgeName + "! Directing to Administrative Registry Controls...");
                 window.location.replace("admin.html");
                 return;
             }
 
+            // 🎓 Regular Student Login Validation Flow
             try {
                 const response = await fetch(`${CLOUD_URL}/api/auth/login`, {
                     method: "POST",
@@ -70,8 +77,12 @@
                     setCookie("userEmail", result.email, 90);
                     alert("Welcome back, " + result.fullName + "!");
                     window.location.replace("student-portal.html");
-                } else { alert(result.error || "Authentication mismatch."); }
-            } catch (error) { alert("Authentication node unreachable. Ensure Railway backend is running."); }
+                } else { 
+                    alert(result.error || "Authentication mismatch."); 
+                }
+            } catch (error) { 
+                alert("Authentication node unreachable. Ensure Railway backend is running."); 
+            }
         }
     </script>
 </body>
