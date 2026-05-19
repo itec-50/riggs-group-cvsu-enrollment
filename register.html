@@ -6,21 +6,20 @@
     <title>Sign-up/Register Page</title>
     <style> 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Times New Roman', Times, serif; min-height: 100vh; display: flex; justify-content: center; align-items: center; background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("laya-at-diwa-scaled.jpg"); background-size: cover; background-position: center; background-attachment: fixed; padding: 20px; }
+        body { font-family: 'Times New Roman', Times, serif; min-height: 100vh; display: flex; justify-content: center; align-items: center; background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url("images/indexbackground.jpg"); background-size: cover; background-position: center; background-attachment: fixed; padding: 20px; }
         .register-box { background-color: rgba(198, 211, 198, 0.92); padding: 30px 20px; width: 100%; max-width: 440px; text-align: center; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.25); }
-        img { display: block; margin: 0 auto 15px auto; max-width: 130px; height: auto; }
+        .register-box img { display: block; margin: 0 auto 15px auto; max-width: 130px; height: auto; }
         h1 { color: rgb(5, 5, 5); font-family: Georgia, serif; font-size: clamp(1.4rem, 4vw, 1.8rem); margin-bottom: 5px; }
         h6 { color: #333; font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 0.95rem; font-weight: normal; margin-bottom: 15px; }
         input { width: 100%; padding: 12px; margin: 6px 0; border: 2px solid rgb(70, 192, 97); border-radius: 6px; font-size: 1rem; outline: none; }
         button { width: 100%; max-width: 140px; background: #1b4d1c; color: white; font-size: 1rem; font-weight: bold; cursor: pointer; padding: 12px; border: none; border-radius: 6px; margin: 15px auto 5px auto; display: block; }
         p.login-redirect { margin-top: 15px; font-size: 0.95rem; color: #222; }
         p.login-redirect a { color: rgb(196, 21, 21); text-decoration: underline; font-weight: bold; }
-        @media (min-width: 768px) { .register-box { padding: 40px 35px; } }
     </style>     
 </head>
 <body>
     <div class="register-box">
-        <img src="alliance.png" alt="Cvsu logo">
+        <img src="images/alliance.png" alt="Cvsu logo">
         <h1>REGISTRATION FORM</h1>
         <form onsubmit="handleRegister(event)">
             <h6>Create your account.</h6>
@@ -54,10 +53,10 @@
                 });
                 const result = await response.json();
                 if (response.ok && result.success) {
-                    alert("Registration successful across all devices! Redirecting to Login...");
+                    alert("Registration successful! Redirecting to Login...");
                     window.location.href = "login.html";
                 } else { alert("Registration rejected: " + result.error); }
-            } catch (error) { alert("Database transmission error. Backend unreachable."); }
+            } catch (error) { alert("Database transmission error. Railway backend unreachable."); }
         }
     </script>
 </body>
