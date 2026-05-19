@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,17 @@
             let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
             return match ? decodeURIComponent(match[2]) : null;
         }
-        if (getCookie("userRole") !== "student") { window.location.href = "login.html"; }
+
+        // 🔑 DASHBOARD PROTECTION SNIPPET (ANTI-BACK-BUTTON PEAKING)
+        function enforceRouteSecurity() {
+            if (getCookie("userRole") !== "student") { 
+                window.location.replace("login.html"); 
+            }
+        }
+        window.addEventListener("pageshow", function (event) {
+            enforceRouteSecurity();
+        });
+        enforceRouteSecurity();
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,7 +38,7 @@
 <body>
     <nav>
         <a href="index.html">← Hub Home</a>
-        <button onclick="executeLogout()">Sign Out</button>
+        <button onclick="executeLogout()">LOG OUT</button>
     </nav>
     <div class="main-container">
         <h1>Welcome, <span id="portalStudentName">Student</span>!</h1>
@@ -42,10 +52,11 @@
     </div>
     <script>
         const CLOUD_URL = "https://riggs-enrollment.up.railway.app";
-        document.getElementById("portalStudentName").innerText = getCookie("userName");
+        document.getElementById("portalStudentName").innerText = getCookie("userName") || "Student";
         
         async function syncStudentState() {
             const userEmail = getCookie("userEmail");
+            if (!userEmail) return;
             document.getElementById("profileEmail").innerText = userEmail;
             try {
                 const response = await fetch(`${CLOUD_URL}/api/applications`);
@@ -60,7 +71,8 @@
             } catch (e) {}
         }
         function executeLogout() {
-            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;"; window.location.href = "login.html";
+            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;"; 
+            window.location.replace("login.html");
         }
         window.onload = syncStudentState;
     </script>
