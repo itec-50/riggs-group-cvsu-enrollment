@@ -9,7 +9,17 @@
             let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
             return match ? decodeURIComponent(match[2]) : null;
         }
-        if (getCookie("userRole") !== "admin") { window.location.href = "login.html"; }
+
+        // 🔑 ADMIN ACCESS SECURITY LAYER (ANTI-BACK-BUTTON PEAKING)
+        function enforceAdminSecurity() {
+            if (getCookie("userRole") !== "admin") { 
+                window.location.replace("login.html"); 
+            }
+        }
+        window.addEventListener("pageshow", function (event) {
+            enforceAdminSecurity();
+        });
+        enforceAdminSecurity();
     </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -101,12 +111,18 @@
 
             const docGrid = document.getElementById("docGrid");
             docGrid.innerHTML = "";
+            
             const docs = [
                 { name: "Birth Cert", src: app.birthCertImg },
-                { name: "Student ID", src: app.studentIdImg }
+                { name: "Student ID", src: app.studentIdImg },
+                { name: "TOR", src: app.torImg },
+                { name: "COG", src: app.cogImg },
+                { name: "Report Card", src: app.reportCardImg },
+                { name: "COR", src: app.corImg }
             ];
+            
             docs.forEach(d => {
-                if(d.src) {
+                if(d.src && d.src.startsWith("data:image")) {
                     const card = document.createElement("div");
                     card.className = "doc-card";
                     card.innerHTML = `<strong>${d.name}</strong><br><img src="${d.src}" onclick="window.open(this.src)">`;
@@ -136,7 +152,8 @@
         }
 
         function executeLogout() {
-            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;"; window.location.href = "login.html";
+            document.cookie = "userRole=; path=/; max-age=0;"; document.cookie = "userName=; path=/; max-age=0;"; document.cookie = "userEmail=; path=/; max-age=0;"; 
+            window.location.replace("login.html");
         }
     </script>
 </body>
