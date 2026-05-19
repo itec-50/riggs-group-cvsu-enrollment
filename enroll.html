@@ -4,98 +4,189 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>S.I | Student Information Form</title>
+    
     <script>
         function getCookie(name) {
             let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
             return match ? decodeURIComponent(match[2]) : null;
         }
-        // Secure Route Guard: If someone manually types enroll.html without logging in, kick them out
-        if (!getCookie("userEmail") || getCookie("userRole") !== "student") {
-            alert("Authentication Required."); 
-            window.location.href = "login.html";
-        }
+
+        (function() {
+            const userEmail = getCookie("userEmail");
+            const userRole = getCookie("userRole");
+
+            if (!userEmail || userRole !== "student") {
+                alert("Authentication Required: Please log in to your student account before accessing the Enrollment Application.");
+                window.location.href = "login.html";
+            }
+        })();
     </script>
+
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; padding-bottom: 60px; background-image: url("indexbackground.jpg"); background-repeat: no-repeat; background-size: cover; background-position: center; min-height: 100vh; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            padding-bottom: 60px;
+            background-image: url("CvSU-Front.jpg");
+            backdrop-filter: blur(2px); 
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
         .form-section { background-color: rgba(198, 211, 198, 0.95); padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+        img { display: block; margin-left: auto; margin-right: auto; width: auto; max-height: 250px; }
         input[type="text"], input[type="date"], input[type="number"], input[type="email"], select { width: 100%; padding: 8px; margin: 6px 0 12px 0; border: 1.5px solid #077516; border-radius: 4px; box-sizing: border-box; }
-        input[readonly] { background-color: #eaeded; color: #2c3e50; cursor: not-allowed; }
+        input[readonly] { background-color: rgba(233, 238, 233, 0.85); color: #2c3e50; cursor: not-allowed; border-color: #7f8c8d; }
+        .radio-group { margin-bottom: 12px; }
         .form-group { background: #f0f4f8; padding: 12px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #17bd3b; }
         .requirement-block { display: none; margin-top: 20px; }
-        button { background-color: #da2619; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; }
-        .img-preview { display: none; max-width: 100%; max-height: 200px; margin-top: 12px; border-radius: 4px; background: #fff; padding: 4px; border: 1px solid #ddd; }
+        button { background-color: #da2619; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
+        button:hover { background-color: #cc0606; }
+        .img-preview { display: none; max-width: 100%; max-height: 220px; margin-top: 12px; border-radius: 4px; border: 1px dashed #aaa; object-fit: contain; background: #fff; padding: 4px; }
+        .back-nav-container { margin-bottom: 15px; }
+        .back-nav-container a { color: #077516; font-weight: bold; text-decoration: none; }
     </style>
 </head>
 <body>
-<div class="form-section">
-    <div style="margin-bottom:15px;"><a href="index.html" style="color:#077516; font-weight:bold; text-decoration:none;">&larr; Main Hub Home</a></div>
-    <h2>Student Information Form</h2>
-    <form id="enrollmentForm" onsubmit="handleSubmit(event)">
-        <p><b>Personal Details</b></p>
-        <label>Student Name:</label> <input type="text" id="studentName" readonly required>
-        <label>Birthdate:</label> <input type="date" id="birthdate" required>
-        <label>Place of Birth:</label> <input type="text" id="birthPlace" required>
-        <label>Student Address:</label> <input type="text" id="studentAddress" required>
-        <label>Contact Number:</label> <input type="number" id="studentContact" required>
-        <label>Email Address:</label> <input type="email" id="studentEmail" readonly required>
 
-        <h3>Academic Configuration</h3>
-        <label>Program Applying For:</label>
-        <select id="program" required>
+<div class="form-section">
+    <div class="back-nav-container"><a href="index.html">&larr; Return to Main Hub</a></div>
+    <img src="alliance.png" alt="Cvsu logo">
+    <h2>Student Information Forms</h2>
+
+    <form id="enrollmentForm" onsubmit="handleSubmit(event)">
+        <div class="requirements">
+            <h3>General Required Documents:</h3>
+            <ul>
+                <li>COR/COG (Certificate of Registration/Grades)</li>
+                <li>Grade-12 Card (for incoming first year)</li>
+                <li>PSA Birth Certificate</li>
+                <li>Valid ID</li>
+            </ul>
+        </div>
+        <hr><br>
+        <p><b>Personal Information</b></p>
+        
+        <label>Student Name (Profile Sync):</label>
+        <input type="text" id="studentName" readonly required>
+        <label>Birthdate:</label>
+        <input type="date" id="birthdate" required>
+        <div class="radio-group">
+            <label>Gender:</label><br>
+            <input type="radio" name="gender" value="male" required> Male
+            <input type="radio" name="gender" value="female" required> Female
+        </div>
+        <label>Place of Birth:</label>
+        <input type="text" id="birthPlace" placeholder="Place of Birth" required>
+        <label>Student Address:</label>
+        <input type="text" id="studentAddress" placeholder="Complete Student Address" required>
+        <label>Contact Number:</label>
+        <input type="number" id="studentContact" placeholder="Contact Number" required>
+        <label>Email Address (Profile Sync):</label>
+        <input type="email" id="studentEmail" readonly required>
+
+        <p><b>Parent/Guardian Information</b></p>
+        <label>Parent/Guardian Name:</label>
+        <input type="text" id="parentName" placeholder="Parent/Guardian Name" required>
+        <label>Relationship to Student:</label>
+        <input type="text" id="parentRelationship" placeholder="Relationship to Student" required>
+        <label>Contact Number:</label>
+        <input type="number" id="parentContact" placeholder="Contact Number" required>
+        <label>Email Address:</label>
+        <input type="email" id="parentEmail" placeholder="Email Address" required>
+        <label>Address:</label>
+        <input type="text" id="parentAddress" placeholder="Address" required>
+
+        <h3>Academic Information</h3>
+        <label for="program">Program Applying For:</label>
+        <select id="program" name="program" required>
             <option value="">-- Select a Program --</option>
+            <option value="BS Crim">Bachelor of Science in Criminology</option>
             <option value="BS IT">BS in Information Technology</option>
             <option value="BS CS">BS in Computer Science</option>
-            <option value="BS Crim">Bachelor of Science in Criminology</option>
             <option value="BS HM">BS in Hospitality Management</option>
             <option value="BS Psych">BS in Psychology</option>
             <option value="BS BM">BS in Business Management</option>
         </select>
-        <label>Student Status:</label>
-        <select id="status" onchange="toggleRequirements()" required>
+
+        <label for="status">Student Status:</label>
+        <select id="status" name="status" onchange="toggleRequirements()" required>
             <option value="">-- Select Status --</option>
             <option value="regular">Regular Student</option>
             <option value="irregular">Irregular Student</option>
+            <option value="transferee">Transferee</option>
             <option value="incoming 1st yr">Incoming First Year</option>
         </select>
-        <label>Student Year:</label>
-        <select id="studentYr" required>  
+
+        <label for="studentYr">Student Year:</label>
+        <select id="studentYr" name="studentYr" required>  
+            <option value="">-- Select Year Level --</option>
             <option value="1st yr">1st Year</option>
             <option value="2nd yr">2nd Year</option>
+            <option value="3rd yr">3rd Year</option>
+            <option value="4th yr">4th Year</option>
         </select>
-        <label>Semester:</label>
-        <select id="semester" required>
+
+        <label for="semester">Semester:</label>
+        <select id="semester" name="semester" required>
+            <option value="">-- Select Semester --</option>
             <option value="1st sem">1st Semester</option>
             <option value="2nd sem">2nd Semester</option>
         </select>
 
         <div id="requirementsSection">
-            <h3>Upload Documents</h3>
+            <h1>Upload Required Documents</h1>
             <div class="form-group">
                 <label>PSA Birth Certificate *</label>
                 <input type="file" id="birthCert" accept="image/*" onchange="previewImage(this, 'birthCertPreview')" required>
-                <img id="birthCertPreview" class="img-preview">
+                <img id="birthCertPreview" class="img-preview" src="" alt="Birth Certificate Preview">
             </div>
             <div class="form-group">
-                <label>Valid Student ID *</label>
+                <label>Valid Student ID / Government ID *</label>
                 <input type="file" id="studentId" accept="image/*" onchange="previewImage(this, 'studentIdPreview')" required>
-                <img id="studentIdPreview" class="img-preview">
+                <img id="studentIdPreview" class="img-preview" src="" alt="ID Preview">
             </div>
+
             <div id="heavyRequirements" class="requirement-block">
-                <div class="form-group"><label>Transcript of Records (TOR) *</label><input type="file" id="torFile" accept="image/*" onchange="previewImage(this, 'torPreview')"><img id="torPreview" class="img-preview"></div>
+                <div class="form-group" style="border-left-color: #dc3545;">
+                    <label>Official Transcript of Records (TOR) *</label>
+                    <input type="file" id="torFile" accept="image/*" onchange="previewImage(this, 'torPreview')">
+                    <img id="torPreview" class="img-preview" src="" alt="TOR Preview">
+                </div>
+                <div class="form-group" style="border-left-color: #dc3545;">
+                    <label>Certified Copy of Grades (COG) *</label>
+                    <input type="file" id="cogFile" accept="image/*" onchange="previewImage(this, 'cogPreview')">
+                    <img id="cogPreview" class="img-preview" src="" alt="COG Preview">
+                </div>
             </div>
+
             <div id="freshmanRequirements" class="requirement-block">
-                <div class="form-group"><label>Grade 12 Report Card *</label><input type="file" id="reportCard" accept="image/*" onchange="previewImage(this, 'reportCardPreview')"><img id="reportCardPreview" class="img-preview"></div>
+                <div class="form-group" style="border-left-color: #28a745;">
+                    <label>Grade 12 Report Card (Form 138) *</label>
+                    <input type="file" id="reportCard" accept="image/*" onchange="previewImage(this, 'reportCardPreview')">
+                    <img id="reportCardPreview" class="img-preview" src="" alt="Report Card Preview">
+                </div>
+            </div>
+
+            <div id="lightRequirements" class="requirement-block">
+                <div class="form-group" style="border-left-color: #ffc107;">
+                    <label>Previous Semester COR *</label>
+                    <input type="file" id="corFile" accept="image/*" onchange="previewImage(this, 'corPreview')">
+                    <img id="corPreview" class="img-preview" src="" alt="COR Preview">
+                </div>
             </div>
         </div>
+        <br><br>
         <button type="submit">Submit Application</button>
     </form>
 </div>
+
 <script>
-    // ⚙️ CONNECTED DIRECTLY TO YOUR NEW WORKING REGION
+    // ⚙️ FIXED: LINKED DIRECTLY TO YOUR RUNNING RAILWAY INSTANCE
     const CLOUD_URL = "https://riggs-enrollment.up.railway.app";
 
     window.addEventListener("DOMContentLoaded", () => {
-        // Auto-fill locked identity trackers from safe cookies session
         document.getElementById("studentName").value = getCookie("userName") || "";
         document.getElementById("studentEmail").value = getCookie("userEmail") || "";
     });
@@ -115,26 +206,50 @@
 
     function toggleRequirements() {
         const status = document.getElementById("status").value;
-        document.getElementById("heavyRequirements").style.display = (status === "irregular") ? "block" : "none";
-        document.getElementById("freshmanRequirements").style.display = (status === "incoming 1st yr") ? "block" : "none";
+        const heavyBlock = document.getElementById("heavyRequirements");
+        const freshmanBlock = document.getElementById("freshmanRequirements");
+        const lightBlock = document.getElementById("lightRequirements");
+
+        heavyBlock.style.display = "none"; 
+        freshmanBlock.style.display = "none"; 
+        lightBlock.style.display = "none";
+
+        if (status === "transferee" || status === "irregular") { heavyBlock.style.display = "block"; } 
+        else if (status === "incoming 1st yr") { freshmanBlock.style.display = "block"; } 
+        else if (status === "regular") { lightBlock.style.display = "block"; }
     }
 
     async function handleSubmit(event) {
         event.preventDefault();
+        const selectedGenderOpt = document.querySelector('input[name="gender"]:checked');
+        const genderValue = selectedGenderOpt ? selectedGenderOpt.value : "Not Specified";
+
+        // 📝 FIXED: TRACKS ALL FORM AND INDEPENDENT GUARDIAN VALUES ACCURATELY
         let studentData = {
             name: document.getElementById("studentName").value.trim(),
             birthdate: document.getElementById("birthdate").value,
+            gender: genderValue,
             address: document.getElementById("studentAddress").value.trim(),
             contact: document.getElementById("studentContact").value,
             email: document.getElementById("studentEmail").value.trim(),
+            
+            parentName: document.getElementById("parentName").value.trim(),
+            parentRelationship: document.getElementById("parentRelationship").value.trim(),
+            parentContact: document.getElementById("parentContact").value,
+            parentEmail: document.getElementById("parentEmail").value.trim(),
+            parentAddress: document.getElementById("parentAddress").value.trim(),
+
             program: document.getElementById("program").value,
             status: "Pending Verification",
             year: document.getElementById("studentYr").value,
             semester: document.getElementById("semester").value,
+            
             birthCertImg: document.getElementById("birthCertPreview").src || "",
             studentIdImg: document.getElementById("studentIdPreview").src || "",
             torImg: document.getElementById("torPreview").src || "",
-            reportCardImg: document.getElementById("reportCardPreview").src || ""
+            cogImg: document.getElementById("cogPreview").src || "",
+            reportCardImg: document.getElementById("reportCardPreview").src || "",
+            corImg: document.getElementById("corPreview").src || ""
         };
 
         try {
@@ -144,13 +259,13 @@
                 body: JSON.stringify(studentData)
             });
             if (response.ok) {
-                alert("Enrollment application submitted successfully to Railway disk storage!");
+                alert("Enrollment application submitted successfully to Railway disk storage.");
                 window.location.href = "student-portal.html";
             } else {
-                alert("Submission rejected by server middleware rules.");
+                alert("Submission error from server handler registry logic.");
             }
-        } catch (error) { 
-            alert("Data pipeline connectivity issue. Verify backend router."); 
+        } catch (error) {
+            alert("Data pipeline connectivity issue. Verify network state.");
         }
     }
 </script>
