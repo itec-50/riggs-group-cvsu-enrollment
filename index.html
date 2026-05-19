@@ -6,28 +6,13 @@
     <title>Welcome | Enrollment Form</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        /* 🔑 FIXED LAYER: Points directly inside your images folder path */
-        body { 
-            background-image: linear-gradient(rgba(70, 132, 50, 0.85), rgba(70, 132, 50, 0.85)), url("images/indexbackground.jpg"); 
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed; 
-            font-family: 'Poppins', sans-serif; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-        }
-        
+        body { background-image: linear-gradient(rgba(70, 132, 50, 0.85), rgba(70, 132, 50, 0.85)), url("images/indexbackground.jpg"); background-size: cover; background-position: center; background-attachment: fixed; font-family: 'Poppins', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
         nav { position: fixed; top: 0; width: 100%; padding: 15px 20px; display: flex; flex-direction: column; gap: 15px; align-items: center; text-align: center; z-index: 100; background-color: #468432; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
         .logo { font-size: 1.2rem; font-weight: 900; color: #6FCF97; letter-spacing: 1px; }
         .logo small { display: block; font-size: 0.8rem; color: #fff; font-weight: 300; }
         .nav-links { display: flex; gap: 12px; list-style: none; align-items: center; justify-content: center; flex-wrap: wrap; width: 100%; }
         .nav-links a { color: rgba(255,255,255,0.9); text-decoration: none; font-size: 0.8rem; font-weight: 500; transition: color 0.3s; cursor: pointer; }
-        
-        /* 🔑 FIXED LINK LOOK: Added cursor pointer so it acts like a real clickable button */
         .nav-cta { background: linear-gradient(135deg, #074205, #ecca15); color: #fff !important; padding: 8px 14px; border-radius: 50px; font-weight: 600 !important; white-space: nowrap; cursor: pointer; }
-        
         .hero { color: white; flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 180px 20px 60px; }
         .hero-content { max-width: 650px; width: 100%; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); padding: 30px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
         .hero h1 { font-size: clamp(1.8rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.2; margin-bottom: 15px; }
@@ -73,7 +58,15 @@
             if (activeRole === "admin") { adminLink.style.display = "block"; loginLink.style.display = "none"; logoutLink.style.display = "block"; }
             else if (activeRole === "student") { portalLink.style.display = "block"; loginLink.style.display = "none"; logoutLink.style.display = "block"; }
         }
+        
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+                synchronizeHomeNavigation();
+            }
+        });
+
         window.addEventListener("DOMContentLoaded", synchronizeHomeNavigation);
+        
         function verifyEnrollmentAccess() {
             const userEmail = getCookie("userEmail");
             const userRole = getCookie("userRole");
