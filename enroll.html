@@ -27,7 +27,7 @@
             font-family: Arial, sans-serif;
             padding: 20px;
             padding-bottom: 60px;
-            background-image: url("CvSU-Front.jpg");
+            background-image: url("images/indexbackground.jpg");
             backdrop-filter: blur(2px); 
             background-repeat: no-repeat;
             background-size: cover;
@@ -52,7 +52,7 @@
 
 <div class="form-section">
     <div class="back-nav-container"><a href="index.html">&larr; Return to Main Hub</a></div>
-    <img src="alliance.png" alt="Cvsu logo">
+    <img src="images/alliance.png" alt="Cvsu logo">
     <h2>Student Information Forms</h2>
 
     <form id="enrollmentForm" onsubmit="handleSubmit(event)">
@@ -183,7 +183,6 @@
 </div>
 
 <script>
-    // ⚙️ FIXED: LINKED DIRECTLY TO YOUR RUNNING RAILWAY INSTANCE
     const CLOUD_URL = "https://riggs-enrollment.up.railway.app";
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -224,7 +223,6 @@
         const selectedGenderOpt = document.querySelector('input[name="gender"]:checked');
         const genderValue = selectedGenderOpt ? selectedGenderOpt.value : "Not Specified";
 
-        // 📝 FIXED: TRACKS ALL FORM AND INDEPENDENT GUARDIAN VALUES ACCURATELY
         let studentData = {
             name: document.getElementById("studentName").value.trim(),
             birthdate: document.getElementById("birthdate").value,
